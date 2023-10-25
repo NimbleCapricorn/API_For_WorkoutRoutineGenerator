@@ -60,20 +60,20 @@ def get_exercise(requested_exercise: str):
 @app.post("/add-exercise")
 def add_exercise(name:str, minreps:int, maxreps:int, priority:float, warmup:bool):
     exercise_to_add=ExerciseClass.Exercise(name, minreps, maxreps, priority, warmup)
-    ExerciseList.append(exercise_to_add)
-    return exercise_to_add
+    ExerciseList.append(deepcopy(exercise_to_add))
+    return ExerciseList[-1]
 
-@app.post("/add-single-week-setting")
-def add_workout_week(VolumeSetting:Volume, IntensitySetting:Intensity, INOLSetting:INOL_Target):
-    week_to_add = WeekClass.ProgramSettingWeek(VolumeSetting, IntensitySetting, INOLSetting)
-    Weeks.add(week_to_add)
-    return week_to_add
+@app.post("/add-single-week-setting")   #TODO#
+def add_workout_week(VolumeSetting:Volume, IntensitySetting:Intensity, INOLSetting:INOL_Target): #This does not work. I am expecting a volume setting, but I get the 
+    week_to_add = WeekClass.ProgramSettingWeek(VolumeSetting, IntensitySetting, INOLSetting)       #value of a volume setting. Same with the other arguments. And I 
+    Weeks.add(deepcopy(week_to_add))                                                                #dont have a search-by-value, only a search by name function
+    return Weeks[-1]
 
 @app.post("/add-single-workout-day")
 def add_single_workout_day(Name:str, exercise_names:List[str]):
     day_to_add=ExerciseClass.ProgramSettingDay(Name, exercise_names)
-    WorkoutDays.append(day_to_add)
-    return day_to_add
+    WorkoutDays.append(deepcopy(day_to_add))
+    return WorkoutDays[-1]
 
 @app.post("/define-the-workout-week")
 def define_a_workout_week(WorkoutDayNames:List[str], DailyExerciseLists:List[str]):
@@ -82,8 +82,8 @@ def define_a_workout_week(WorkoutDayNames:List[str], DailyExerciseLists:List[str
         day_to_add=ExerciseClass.ProgramSettingDay(WorkoutDayName, DailyExerciseLists[dayindex])
         WorkoutWeek.append(day_to_add)
     WorkoutDays.clear()
-    WorkoutDays.extend(WorkoutWeek)
-    return WorkoutWeek
+    WorkoutDays.extend(deepcopy(WorkoutWeek))
+    return WorkoutDays
 
 @app.get("/generate-program")
 def generate_Program():
