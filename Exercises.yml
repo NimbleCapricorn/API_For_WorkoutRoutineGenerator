@@ -88,4 +88,9 @@ Exercises:
     minRepetitions: 2 
     maxRepetitions: 4 
     Priority: 1.0 
+    generateWarmup: False   
+  - Name: hang snatch with three stops
+    minRepetitions: 2 
+    maxRepetitions: 4 
+    Priority: 1.0 
     generateWarmup: False    
