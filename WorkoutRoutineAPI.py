@@ -75,7 +75,7 @@ def add_single_workout_day(Name:str, exercise_names:List[str]):
     WorkoutDays.append(day_to_add)
     return day_to_add
 
-@app.port("/define-the-workout-week")
+@app.post("/define-the-workout-week")
 def define_a_workout_week(WorkoutDayNames:List[str], DailyExerciseLists:List[str]):
     WorkoutWeek:ExerciseClass.ProgramSettingDay=[]
     for dayindex, WorkoutDayName in enumerate(WorkoutDayNames):
@@ -85,7 +85,7 @@ def define_a_workout_week(WorkoutDayNames:List[str], DailyExerciseLists:List[str
     WorkoutDays.extend(WorkoutWeek)
     return WorkoutWeek
 
-@app.port("/generate-program")
+@app.get("/generate-program")
 def generate_Program():
     #Generating program Data
     for weekindex, week in enumerate(Weeks):
