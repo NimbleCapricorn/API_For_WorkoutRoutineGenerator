@@ -7,7 +7,7 @@ from yaml import *
 from workoutroutinegenerator import DayClass, Warmup, ProgramSettingWeekClass as WeekClass
 from workoutroutinegenerator.exerciseclass import ExerciseClass
 from workoutroutinegenerator.exerciseclass.difficulty.enumdefinitions.EnumDefinitions import Volume, Intensity, INOL_Target
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, Response
 from typing import Optional, List
 
 
@@ -64,9 +64,11 @@ def add_exercise(name:str, minreps:int, maxreps:int, priority:float, warmup:bool
     return ExerciseList[-1]
 
 @app.post("/add-single-week-setting")   #TODO#
-def add_workout_week(VolumeSetting:Volume, IntensitySetting:Intensity, INOLSetting:INOL_Target): #This does not work. I am expecting a volume setting, but I get the 
-    week_to_add = WeekClass.ProgramSettingWeek(VolumeSetting, IntensitySetting, INOLSetting)       #value of a volume setting. Same with the other arguments. And I 
-    Weeks.add(deepcopy(week_to_add))                                                                #dont have a search-by-value, only a search by name function
+def add_workout_week(VolumeSetting:str, IntensitySetting:str, INOLSetting:str): #This does not work. I am expecting a volume setting, but I get the 
+    week_to_add = WeekClass.ProgramSettingWeek( WeekClass.searchVolumeSetting(VolumeSetting),
+                                                WeekClass.searchIntensitySetting(IntensitySetting),
+                                                WeekClass.searchINOLSetting(INOLSetting))       
+    Weeks.append(deepcopy(week_to_add))                                                               
     return Weeks[-1]
 
 @app.post("/add-single-workout-day")
@@ -86,7 +88,7 @@ def define_a_workout_week(WorkoutDayNames:List[str], DailyExerciseLists:List[str
     return WorkoutDays
 
 @app.get("/generate-program")
-def generate_Program():
+def generate_Program(response: Response):
     #Generating program Data
     for weekindex, week in enumerate(Weeks):
         for Day in WorkoutDays:
@@ -107,10 +109,12 @@ def generate_Program():
                     ProgramList.extend(Warmup.GenerateWarmup(ProgramList[-1]))
 
     #DataFrame implementation        
-    Program=DataFrame(data={"Week":[], "Day":[], "Exercise":[], "Sets":[], "Reps":[], "PercentageOfOneRepMax":[], "INOL":[]})
+    Program=DataFrame(data={"ID":[],"Week":[], "Day":[], "Exercise":[], "Sets":[], "Reps":[], "PercentageOfOneRepMax":[], "INOL":[]})
     for index, exercise in enumerate(ProgramList):
         Program=concat([Program, 
-                        DataFrame([[exercise.WeekIndex,
+                        DataFrame([[
+                                    index,
+                                    exercise.WeekIndex,
                                     exercise.Day,
                                     exercise.Name,
                                     exercise.NumberOfSets, 
@@ -120,4 +124,5 @@ def generate_Program():
                                 columns=Program.columns)],
                         ignore_index=True)
     ####################################################
-    return Program
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return ProgramList
