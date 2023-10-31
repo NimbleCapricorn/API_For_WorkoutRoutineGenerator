@@ -6,7 +6,7 @@ from subprocess import *
 from yaml import *
 from workoutroutinegenerator import DayClass, Warmup, ProgramSettingWeekClass as WeekClass
 from workoutroutinegenerator.exerciseclass import ExerciseClass
-from workoutroutinegenerator.exerciseclass.difficulty.enumdefinitions.EnumDefinitions import Volume, Intensity, INOL_Target
+from workoutroutinegenerator.exerciseclass.difficulty.enumdefinitions.EnumDefinitions import Volume, Intensity, INOLTarget
 from fastapi import FastAPI, Path, Response
 from typing import Optional, List
 
